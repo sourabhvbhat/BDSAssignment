@@ -1,32 +1,45 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 
-current_date = None
+current_airport = None
 total_delay = 0
 flight_count = 0
+airport_delays = []  # Store (airport, avg_delay) pairs
 
-# Read input line by line
 for line in sys.stdin:
     line = line.strip()
-    date, delay = line.split("\t")
+    if not line:
+        continue  # Ignore empty lines
 
     try:
+        airport, delay, count = line.split("\t")
         delay = int(delay)
+        count = int(count)
+
+        if current_airport == airport:
+            total_delay += delay
+            flight_count += count
+        else:
+            if current_airport is not None and flight_count > 0:
+                avg_delay = total_delay / flight_count
+                airport_delays.append((current_airport, avg_delay))  # Store result
+
+            current_airport = airport
+            total_delay = delay
+            flight_count = count
+
     except ValueError:
-        continue
+        continue  # Ignore invalid data
 
-    # If new date is encountered, process the previous one
-    if current_date and current_date != date:
-        avg_delay = total_delay / flight_count if flight_count else 0
-        print(f"{current_date}\t{avg_delay}")  # Output Date -> Avg Delay
-        total_delay = 0  # Reset for new date
-        flight_count = 0
+# Add the last airport's average delay
+if current_airport and flight_count > 0:
+    avg_delay = total_delay / flight_count
+    airport_delays.append((current_airport, avg_delay))
 
-    current_date = date
-    total_delay += delay
-    flight_count += 1
+# Sort by average delay in descending order
+airport_delays.sort(key=lambda x: x[1], reverse=True)
 
-# Process last date
-if current_date:
-    avg_delay = total_delay / flight_count if flight_count else 0
-    print(f"{current_date}\t{avg_delay}")
+# Print the sorted results
+for airport, avg_delay in airport_delays:
+    print(f"{airport}\t{avg_delay:.2f}")
+

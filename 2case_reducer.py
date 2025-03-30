@@ -1,27 +1,45 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
 
 current_airline = None
 total_delay = 0
+flight_count = 0
+airline_delays = []  # Store (airline, avg_delay) pairs
 
-# Read input line by line
 for line in sys.stdin:
     line = line.strip()
-    airline, delay = line.split("\t")
+    if not line:
+        continue  # Ignore empty lines
 
     try:
+        airline, delay, count = line.split("\t")
         delay = int(delay)
+        count = int(count)
+
+        if current_airline == airline:
+            total_delay += delay
+            flight_count += count
+        else:
+            if current_airline is not None and flight_count > 0:
+                avg_delay = total_delay / flight_count
+                airline_delays.append((current_airline, avg_delay))  # Store result
+
+            current_airline = airline
+            total_delay = delay
+            flight_count = count
+
     except ValueError:
-        continue
+        continue  # Ignore invalid data
 
-    # If new airline is encountered, process the previous one
-    if current_airline and current_airline != airline:
-        print(f"{current_airline}\t{total_delay}")  # Output Airline -> Total Delay
-        total_delay = 0  # Reset for new airline
+# Add the last airline's average delay
+if current_airline and flight_count > 0:
+    avg_delay = total_delay / flight_count
+    airline_delays.append((current_airline, avg_delay))
 
-    current_airline = airline
-    total_delay += delay
+# Sort airlines by average delay in descending order
+airline_delays.sort(key=lambda x: x[1], reverse=True)
 
-# Process last airline
-if current_airline:
-    print(f"{current_airline}\t{total_delay}")
+# Print sorted results
+for airline, avg_delay in airline_delays:
+    print(f"{airline}\t{avg_delay:.2f}")
+

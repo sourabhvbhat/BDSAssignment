@@ -1,23 +1,22 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import sys
-from datetime import datetime
 
-# Read input line by line
 for line in sys.stdin:
-    line = line.strip()  # Remove leading/trailing spaces
-    fields = line.split(',')  # Split CSV line into fields
+    line = line.strip()
+    
+    # Skip empty lines
+    if not line:
+        continue  
 
-    # Ensure we have enough columns
-    if len(fields) >= 8:
-        date_string = fields[0]  # Extract Date (Column 1)
-        airline = fields[1]  # Extract Carrier (Airline Code, Column 2)
+    fields = line.split(',')
 
-        try:
-            # Convert the date string into a datetime object and extract the month
-            date_obj = datetime.strptime(date_string, "%Y-%m-%d")
-            month = date_obj.month  # Get month as an integer (1 for Jan, 2 for Feb, etc.)
+    # Ensure that the first field (Date) exists and has the correct format MM-DD-YYYY
+    if len(fields) > 0 and '/' in fields[0]:
+        date = fields[0].strip()  # Extract date (MM/DD/YYYY)
+        parts = date.split('/')
 
-            # Emit key-value pair: (Month, Airline) -> Flight Count (1)
-            print(f"{month},{airline}\t1")
-        except ValueError:
-            continue  # Ignore invalid date formats
+        # Ensure valid date format
+        if len(parts) == 3 and parts[0].isdigit():
+            month = parts[0]  # Extract month (MM)
+            print(f"{month}\t1")  # Emit (month, 1)
+

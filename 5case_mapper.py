@@ -3,13 +3,20 @@ import sys
 
 # Read input line by line
 for line in sys.stdin:
-    line = line.strip()  # Remove leading/trailing spaces
-    fields = line.split(',')  # Split CSV line into fields
+    line = line.strip()  # Remove leading/trailing whitespace
 
-    # Ensure we have enough columns
-    if len(fields) >= 6:
-        origin_airport = fields[3]  # Extract OriginAirportID (Column 4)
-        destination_airport = fields[5]  # Extract DestAirportID (Column 6)
+    if not line or line.startswith("Date"):  # Skip empty lines and header
+        continue
 
-        # Emit key-value pair: OriginAirportID -> DestinationAirportID
-        print(f"{origin_airport}\t{destination_airport}")
+    fields = line.split(',')
+
+    if len(fields) >= 6:  # Ensure valid data
+        origin_airport = fields[2].strip()  # OriginAirportName
+        dest_airport = fields[4].strip()  # DestAirportName
+
+        # Emit both origin and destination airports with a count of 1
+        if origin_airport:
+            print(f"{origin_airport}\t1")
+        if dest_airport:
+            print(f"{dest_airport}\t1")
+

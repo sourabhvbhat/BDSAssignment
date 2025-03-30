@@ -1,22 +1,25 @@
 #!/usr/bin/python
 import sys
 
-current_airport = None
-destination_set = set()
+airport_count = {}
 
-# Read input line by line
+# Read each key-value pair from the mapper
 for line in sys.stdin:
     line = line.strip()
-    origin_airport, destination_airport = line.split("\t")
+    if not line:
+        continue
 
-    # If a new airport is encountered, process the previous one
-    if current_airport and current_airport != origin_airport:
-        print(f"{current_airport}\t{len(destination_set)}")  # Output (Airport -> Unique Destinations)
-        destination_set.clear()  # Reset for new airport
+    airport, count = line.split("\t")
 
-    current_airport = origin_airport
-    destination_set.add(destination_airport)
+    if airport in airport_count:
+        airport_count[airport] += int(count)
+    else:
+        airport_count[airport] = int(count)
 
-# Process last airport
-if current_airport:
-    print(f"{current_airport}\t{len(destination_set)}")
+# Sort airports by number of connections in descending order
+sorted_airports = sorted(airport_count.items(), key=lambda x: x[1], reverse=True)
+
+# Print sorted results
+for airport, count in sorted_airports:
+    print(f"{airport}\t{count}")
+

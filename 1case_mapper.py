@@ -7,8 +7,8 @@ for line in sys.stdin:
     fields = line.split(',')
 
     if len(fields) >= 6:
-        origin_airport = fields[3]  # OriginAirportID
-        destination_airport = fields[5]  # DestAirportID
+        origin_airport = fields[2]  # OriginAirportName
+        destination_airport = fields[4]  # DestAirportName
 
         # Emit key-value pair: OriginAirportID -> DestAirportID
         print(f"{origin_airport},{destination_airport}\t1")

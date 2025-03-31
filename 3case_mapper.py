@@ -17,8 +17,8 @@ for line in sys.stdin:
         dep_delay = int(dep_delay) if dep_delay.lstrip('-').isdigit() else None
         arr_delay = int(arr_delay) if arr_delay.lstrip('-').isdigit() else None
 
-        # Ignore negative delays and None values
-        if dep_delay is not None and dep_delay >= 0 and arr_delay is not None and arr_delay >= 0:
+        # Considering delay greater than 30 mins as delay due to weather 
+        if dep_delay is not None and dep_delay >= 30 and arr_delay is not None and arr_delay >= 30:
             total_delay = dep_delay + arr_delay
             print(f"{airport}\t{total_delay}\t1")  # Emit: airport \t delay \t count
 
